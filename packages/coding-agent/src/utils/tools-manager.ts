@@ -38,6 +38,9 @@ const TOOLS: Record<string, ToolConfig> = {
 				const archStr = architecture === "arm64" ? "aarch64" : "x86_64";
 				return `fd-v${version}-${archStr}-apple-darwin.tar.gz`;
 			} else if (plat === "linux") {
+				if (architecture === "arm" || architecture === "armv7l") {
+					return `fd-v${version}-arm-unknown-linux-gnueabihf.tar.gz`;
+				}
 				const archStr = architecture === "arm64" ? "aarch64" : "x86_64";
 				return `fd-v${version}-${archStr}-unknown-linux-gnu.tar.gz`;
 			} else if (plat === "win32") {
@@ -57,6 +60,9 @@ const TOOLS: Record<string, ToolConfig> = {
 				const archStr = architecture === "arm64" ? "aarch64" : "x86_64";
 				return `ripgrep-${version}-${archStr}-apple-darwin.tar.gz`;
 			} else if (plat === "linux") {
+				if (architecture === "arm" || architecture === "armv7l") {
+					return `ripgrep-${version}-armv7-unknown-linux-gnueabihf.tar.gz`;
+				}
 				if (architecture === "arm64") {
 					return `ripgrep-${version}-aarch64-unknown-linux-gnu.tar.gz`;
 				}
@@ -69,6 +75,15 @@ const TOOLS: Record<string, ToolConfig> = {
 		},
 	},
 };
+
+export function getToolAssetName(
+	tool: "fd" | "rg",
+	version: string,
+	plat: string,
+	architecture: string,
+): string | null {
+	return TOOLS[tool]?.getAssetName(version, plat, architecture) ?? null;
+}
 
 // Check if a command exists in PATH by trying to run it
 function commandExists(cmd: string): boolean {
